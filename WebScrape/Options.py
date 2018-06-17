@@ -6,19 +6,15 @@ Created on Sat Jan 13 22:45:00 2018
 """
 
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver import ActionChains
-from selenium.webdriver.support.select import Select
-import html5lib, requests
-from bs4 import BeautifulSoup
-import shutil
+from selenium.webdriver.common.by import By
+
+
 import os, sys, socket
 import time, datetime
 import numpy as np, pandas as pd
-import stopit
 import json
-import bson
+
 
 cName = socket.gethostname()
 
@@ -115,5 +111,5 @@ def get_options():
                 tk=ticker,dt=today), 'w') as outfile:
             outfile.write(json.dumps(docx))
     
-    
+    browser.close()
 

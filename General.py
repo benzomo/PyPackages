@@ -16,7 +16,7 @@ from matplotlib.ticker import Formatter
 import re
 from itertools import permutations, product, chain
 from functools import reduce
-
+import struct
 
 similar = lambda a, b: SequenceMatcher(None, a, b).ratio()
 
@@ -53,6 +53,12 @@ def egen(data, f, applyto, groupby, column_filt, newcol):
     
     return pd.merge(data, tmp, how='inner', left_on=column_filt, right_on =applyto + ['index'])
     
+
+def read_idx(filename):
+    with open(filename, 'rb') as f:
+        zero, data_type, dims = struct.unpack('>HBB', f.read(4))
+        shape = tuple(struct.unpack('>I', f.read(4))[0] for d in range(dims))
+        return np.fromstring(f.read(), dtype=np.uint8).reshape(shape)
 
 
 class MyComp():
