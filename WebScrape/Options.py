@@ -24,7 +24,7 @@ if cName == 'DESKTOP-HOKP1GT':
     mainDisk = "C:/Users/benmo"
     dataDisk = "D:/Data"
 elif sys.platform == 'linux':
-    ffProfilePath = "/home/benmo/.mozilla/firefox/w55ako72.dev-edition-default"
+    ffProfilePath = "/home/benmo/.mozilla/firefox/bcnujh2r.auto"
     mainDisk = "/home/benmo"
     dataDisk = "/home/benmo/Data"
 else:

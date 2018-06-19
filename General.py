@@ -23,6 +23,27 @@ similar = lambda a, b: SequenceMatcher(None, a, b).ratio()
 crs4326 = {'init': 'epsg:4326'}
 
 
+
+def get_commodities():
+    oil = quandl.get('CHRIS/CME_WS1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    natgas = quandl.get('CHRIS/CME_NG1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    gold = quandl.get('CHRIS/CME_GC1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    rice = quandl.get('CHRIS/ODE_TR1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    grain = quandl.get('CHRIS/EUREX_FCGR1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    lumber = quandl.get('CHRIS/CME_LB1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    steelCHN = quandl.get('CHRIS/SHFE_WR1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    steelUSA = quandl.get('CHRIS/CME_HR1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    coal = quandl.get('CHRIS/SGX_CFF1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    
+    df = pd.DataFrame([])
+    for (key, temp) in zip(['Oil', 'Natural Gas', 'Gold', 'Rice', 'Grain',
+        'Lumber', 'SteelCHN', 'SteelUSA', 'Coal'], [oil, natgas, gold, rice,
+                                                grain, lumber, steelCHN, 
+                                                steelUSA, coal]):
+        temp['Commodity'] = key
+        df = df.append(temp)
+    return df
+
 def print_lines(fn, N, out=None):
     fout=open(out, 'w+') if out == None else None
     f=open(fn)
