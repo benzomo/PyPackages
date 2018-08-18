@@ -8,13 +8,13 @@ Created on Sat Jan 13 22:45:00 2018
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
-
+from selenium.webdriver.support import expected_conditions as EC
 
 import os, sys, socket
 import time, datetime
 import numpy as np, pandas as pd
 import json
-
+from random import shuffle
 
 cName = socket.gethostname()
 
@@ -24,7 +24,7 @@ if cName == 'DESKTOP-HOKP1GT':
     mainDisk = "C:/Users/benmo"
     dataDisk = "D:/Data"
 elif sys.platform == 'linux':
-    ffProfilePath = "/home/benmo/.mozilla/firefox/bcnujh2r.auto"
+    ffProfilePath = "/home/benmo/.mozilla/firefox/a3vvqys3.scraper"
     mainDisk = "/home/benmo"
     dataDisk = "/home/benmo/Data"
 else:
@@ -40,25 +40,53 @@ def test():
     
 def get_options():
     
-    fp = webdriver.FirefoxProfile(ffProfilePath)
+    #fp = webdriver.FirefoxProfile(ffProfilePath)
+    #fp.set_preference("general.useragent.override", "Chrome/44.0.2403.157")
+    #fp.set_preference('webdriver.load.strategy', 'unstable')
+    
     if sys.platform == 'linux':
-        browser = webdriver.Firefox(executable_path="/home/benmo/Apps/Selenium/geckodriver",firefox_profile=fp)
+        #browser = webdriver.Firefox(executable_path="/home/benmo/Apps/Selenium/geckodriver",firefox_profile=fp)
+        browser = webdriver.Chrome(executable_path="/home/benmo/Apps/Selenium/chromedriver")
     else:
         browser = webdriver.Firefox(firefox_profile=fp)
     
     tickers = pd.read_csv('/home/benmo/Data/Databases/ETFS.csv', header=None)[0]
+    shuffle(tickers)
     
     def get_json(browser, docx, expDates, i):
-        WebDriverWait(browser, 5).until(
+        try:
+            WebDriverWait(browser, 5).until(
                         lambda x: x.find_element_by_xpath(
-                            "//div/select[@class='Fz(s)']").find_elements(
-                                    By.CSS_SELECTOR , '*')[i]).click()
-            
+                "//*[@class='Bd(0) P(0) O(n):f D(ib) Fz(s) Fl(end) Mt(6px) Mend(8px) close']")).click()
+
+        except:
+            pass
+        
+        oldurl = browser.current_url
+        
+       
+        WebDriverWait(browser, 10).until(
+                lambda x: x.find_element_by_xpath(
+                    "//div/select[@class='Fz(s)']").find_elements(
+                            By.CSS_SELECTOR , '*')[i]).click()
+        
+        try:
+            WebDriverWait(browser, 10).until(EC.url_changes(oldurl))
+        except: 
+            pass
+        
         datetxt = expDates[i]
 
-        
-        bob = browser.find_element_by_xpath("//script[contains(text(), '(function (root)')]")
+
+        browser.get(browser.current_url)
+        bob = WebDriverWait(browser, 6).until(
+                lambda x: x.find_element_by_xpath(
+                        "//script[contains(text(), '(function (root)')]"))
         bob = bob.get_attribute('innerText')
+                
+       
+            
+        
         
         
         date = datetime.datetime.strptime(
@@ -102,7 +130,7 @@ def get_options():
             try:
                 docx = get_json(browser, docx, expDates, i)
             except:
-                time.sleep(1)
+                url = browser.current_url
                 browser.get(url)
                 docx = get_json(browser, docx, expDates, i)
             

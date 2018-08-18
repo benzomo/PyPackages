@@ -8,6 +8,8 @@ Created on Sat Jan 13 22:45:00 2018
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 import shutil, stopit
 import os, sys, socket
@@ -59,21 +61,36 @@ def test():
     
 def get_calendar():
     fp = webdriver.FirefoxProfile(ffProfilePath)
+    #fp.set_preference("general.useragent.override", "Mozilla/5.0")
+    
     if sys.platform == 'linux':
-        browser = webdriver.Firefox(executable_path="/home/benmo/Apps/Selenium/geckodriver",firefox_profile=fp)
+        browser = webdriver.Chrome(executable_path="/home/benmo/Apps/Selenium/chromedriver")
     else:
         browser = webdriver.Firefox(firefox_profile=fp)
     
     url = "https://www.fxstreet.com/economic-calendar"  
     browser.get(url)
     
+    WebDriverWait(browser, 10).until(
+                        lambda x: x.find_element_by_xpath(
+                                "//*[contains(text(), 'close')]"))
+    temp = browser.find_element_by_xpath(
+                                "//*[contains(text(), 'close')]")
     
-    
-    browser.find_element_by_xpath("//*[contains(text(), 'Today')]").click()
+    ActionChains(browser).move_to_element(temp).click().perform()
+
+    browser.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
+
+
+    WebDriverWait(browser, 10).until(
+                        lambda x: x.find_element_by_xpath(
+                                "//*[contains(text(), 'Today')]")).click()
+
     time.sleep(1)
 
-    browser.find_element_by_xpath(
-            "//*[@class='fxs_btn_group fxs_btn_group_align_calendar']").click()
+    WebDriverWait(browser, 10).until(
+                        lambda x: x.find_element_by_xpath(
+            "//*[@class='fxs_btn_group fxs_btn_group_align_calendar']")).click()
     
     browser.find_element_by_xpath("//*[contains(text(), 'Export as CSV')]").click()
     

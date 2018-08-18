@@ -23,8 +23,51 @@ similar = lambda a, b: SequenceMatcher(None, a, b).ratio()
 crs4326 = {'init': 'epsg:4326'}
 
 
+def mostSimilar(x,term):
+    temp = np.array([x,list(map(lambda x: similar(x,term), x))]).T
+    return pd.DataFrame(temp,
+                        columns=['Name','Score']).sort_values('Score',ascending=False)
 
+
+def getEconVars():
+    varz = pd.read_csv("/home/benmo/Data/Econ/Indicators/indicators.csv")
+    fedData = pickleLib.fedData()
+    
+    econDict = {}
+    
+    
+    for col in varz.columns:
+        temp = varz[col].dropna()
+        econDict[col] = {}
+        
+        for var in temp:
+            econDict[col][var] = mostSimilar(fedData.item, var).iloc[:5].set_index(
+                    'Name').to_dict()
+    return econDict
+
+
+#"/home/benmo/Data/PyObjects/commodities.pkl"
 def get_commodities():
+    oil = quandl.get('CHRIS/CME_WS1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    natgas = quandl.get('CHRIS/CME_NG1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    gold = quandl.get('CHRIS/CME_GC1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    rice = quandl.get('CHRIS/ODE_TR1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    grain = quandl.get('CHRIS/EUREX_FCGR1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    lumber = quandl.get('CHRIS/CME_LB1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    steelCHN = quandl.get('CHRIS/SHFE_WR1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    steelUSA = quandl.get('CHRIS/CME_HR1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    coal = quandl.get('CHRIS/SGX_CFF1', authtoken="FLjC56RgKyq7-zAcTJ_x")
+    
+    df = pd.DataFrame([])
+    for (key, temp) in zip(['Oil', 'Natural Gas', 'Gold', 'Rice', 'Grain',
+        'Lumber', 'SteelCHN', 'SteelUSA', 'Coal'], [oil, natgas, gold, rice,
+                                                grain, lumber, steelCHN, 
+                                                steelUSA, coal]):
+        temp['Commodity'] = key
+        df = df.append(temp)
+    return df
+
+def get_etfs():
     oil = quandl.get('CHRIS/CME_WS1', authtoken="FLjC56RgKyq7-zAcTJ_x")
     natgas = quandl.get('CHRIS/CME_NG1', authtoken="FLjC56RgKyq7-zAcTJ_x")
     gold = quandl.get('CHRIS/CME_GC1', authtoken="FLjC56RgKyq7-zAcTJ_x")
