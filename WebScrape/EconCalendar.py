@@ -74,14 +74,23 @@ def get_calendar():
     WebDriverWait(browser, 10).until(
                         lambda x: x.find_element_by_xpath(
                                 "//*[contains(text(), 'close')]"))
+    time.sleep(2)
+    
     temp = browser.find_element_by_xpath(
                                 "//*[contains(text(), 'close')]")
     
     ActionChains(browser).move_to_element(temp).click().perform()
-
+    
+    temp = browser.find_element_by_xpath(
+                                "//*[contains(text(), 'close')]")
+    
+    ActionChains(browser).move_to_element(temp).click().perform()
+    
+    time.sleep(2)
+    
     browser.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
-
-
+   
+    time.sleep(1)
     WebDriverWait(browser, 10).until(
                         lambda x: x.find_element_by_xpath(
                                 "//*[contains(text(), 'Today')]")).click()

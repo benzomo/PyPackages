@@ -7,6 +7,9 @@ Created on Sat Jan 13 22:45:00 2018
 
 import numpy as np, pandas as pd
 
+
+import sklearn
+
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import train_test_split
 
@@ -20,6 +23,13 @@ from keras import backend as K
 
 from scipy.stats import gmean, boxcox_normmax
 from scipy.special import boxcox, inv_boxcox
+
+
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import AdaBoostRegressor
+
+
+from functools import reduce
 
 
 def laglead(df,lag, lead):
@@ -212,4 +222,35 @@ class ts_LSTM():
         
         self.predict = predict        
 
+
+class DecisionTree():
+    max_depth = 4
+    random_state=0
+    n_estimators=300 
+    random_state=0
+    
+    def __init__(self, ttype='aboost'): 
+        if ttype == 'aboost':
+            self.regressor = AdaBoostRegressor(DecisionTreeRegressor(max_depth=self.max_depth),
+                              n_estimators=self.n_estimators, 
+                              random_state=self.random_state)
         
+        else:
+            self.regressor = DecisionTreeRegressor(max_depth=self.max_depth, 
+                                                   random_state=self.random_state)
+        
+        def fit(X_train, y_train):
+            return self.regressor.fit(X_train, y_train)
+        
+        def predict(df):
+            return self.regressor.predict(df)
+        
+        self.fit = fit
+        self.predict = predict
+        
+        
+        
+       
+    
+    
+      
