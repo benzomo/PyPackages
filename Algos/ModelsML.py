@@ -224,12 +224,13 @@ class ts_LSTM():
 
 
 class DecisionTree():
-    max_depth = 4
-    random_state=0
-    n_estimators=300 
-    random_state=0
     
-    def __init__(self, ttype='aboost'): 
+    def __init__(self, ttype='aboost',random_state=0,max_depth=4,n_estimators=300): 
+        self.max_depth = max_depth
+        self.random_state=random_state
+        self.n_estimators=n_estimators 
+        self.random_state=random_state
+        
         if ttype == 'aboost':
             self.regressor = AdaBoostRegressor(DecisionTreeRegressor(max_depth=self.max_depth),
                               n_estimators=self.n_estimators, 
