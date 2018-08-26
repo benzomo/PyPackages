@@ -6,11 +6,12 @@ Created on Sat Jan 13 22:45:00 2018
 """
 
 import numpy as np, pandas as pd
+from functions import *
 
 
 import sklearn
 
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
 from sklearn.model_selection import train_test_split
 
 from keras.models import load_model, Model, Sequential
@@ -20,9 +21,6 @@ from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.utils import to_categorical
 from keras.optimizers import Adam
 from keras import backend as K
-
-from scipy.stats import gmean, boxcox_normmax
-from scipy.special import boxcox, inv_boxcox
 
 
 from sklearn.tree import DecisionTreeRegressor
@@ -42,59 +40,7 @@ def laglead(df,lag, lead):
         newDict[col].dropna(inplace=True)
     return newDict
 
-def scale(df, how='std'):
-        class Transform():
-            def __init__(self, tfm, utfm):
-                self.tfm = tfm
-                self.utfm = utfm
-            
-        if how == 'std':
-            std = df.std(ddof=0)
-            mu = df.mean()
-            tfm = lambda df: df.set_value(index=df.index, col=df.columns,
-                                  value=StandardScaler().fit_transform(df))
-            utfm = lambda x: x*std + mu
-        
-        elif how == 'minmax':
-            maxmin = df.max() - df.min() 
-            mu = df.mean()
-            tfm = lambda df: df.set_value(index=df.index, col=df.columns,
-                                  value=MinMaxScaler().fit_transform(df))
-            utfm = lambda x: x*maxmin + mindf           
-        
-        elif how == 'boxcox':
-            maxmin = df.max() - df.min() 
-            mindf = df.min()
-            tempscaler = MinMaxScaler()
-            df = df.set_value(index=df.index, col=df.columns,
-                                  value=tempscaler.fit_transform(df))
-            
-            bxcx_lmd = (df + 0.00000001).apply(boxcox_normmax)
-           
-            for col in df.columns:
-                df[col] = boxcox(df[col] + 0.00000001, 
-                        bxcx_lmd[col])
-            mu = df.mean()
-            
-            def tfm(df, bxcx_lmd=bxcx_lmd):
-                tempscaler = MinMaxScaler()
-                df = df.set_value(index=df.index, col=df.columns,
-                                  value=tempscaler.fit_transform(df))                
-                for col in df.columns:
-                    df[col] = boxcox(df[col] + 0.00000001, 
-                            bxcx_lmd[col])
-                return df - mu
-            
-            def utfm(df, bxcx_lmd=bxcx_lmd):
-                df = df + mu
-                for col in df.columns:
-                    df[col] = inv_boxcox(df[col], 
-                            bxcx_lmd[col]) - 0.00000001
-                return df*maxmin + mindf
-            
-        scaler = Transform(tfm,utfm)
-        
-        return scaler
+
 
 
 class ts_LSTM():
@@ -116,6 +62,9 @@ class ts_LSTM():
         self.df = self.scaler.tfm(df)
         self.pred_key = pred_key
         self.index=df.index
+        
+        
+        self.__name__ = 'ts_LSTM'
          
     
         class stats:
@@ -231,6 +180,8 @@ class DecisionTree():
         self.n_estimators=n_estimators 
         self.random_state=random_state
         
+        self.__name__ = 'DecisionTree'
+        
         if ttype == 'aboost':
             self.regressor = AdaBoostRegressor(DecisionTreeRegressor(max_depth=self.max_depth),
                               n_estimators=self.n_estimators, 
@@ -245,6 +196,7 @@ class DecisionTree():
         
         def predict(df):
             return self.regressor.predict(df)
+        
         
         self.fit = fit
         self.predict = predict
