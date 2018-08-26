@@ -1,14 +1,15 @@
 import numpy as np, pandas as pd
 
-from Viz import *
-from ModelsML import ts_LSTM, DecisionTree, scale
-from functions import *
-from base import *
+from .Viz import *
+from .ModelsML import ts_LSTM, DecisionTree, scale
+from .functions import *
+from .base import *
 
 from functools import reduce, partial
 from sklearn.model_selection import RepeatedKFold
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.datasets import make_regression
+from sklearn.decomposition import TruncatedSVD
 from sklearn import tree
 
 
@@ -92,6 +93,23 @@ class RegressorCollection():
     def fit(self, X, y):
         for key in self.models.keys():
             self.fitted[key] = self.models[key].fit()
+            
+    def gen_pc(self, dims=2, topx=20):
+        svd = TruncatedSVD(algorithm='randomized', n_components=2, n_iter=10,
+                           random_state=0)
+        
+        fi = pd.DataFrame(self.feature_importances_).sort_values(
+                'Features', ascending=False).index[:20].tolist()
+        
+        rd = svd.fit_transform(self.X.scaled)
+        ncols = rd.shape[1]
+        
+        self.principle_comp = MLDataFrame(
+                pd.DataFrame(rd, columns=['component' + str(i) for i in range(dims)]))
+        
+        self.principle_comp.add_scaled()
+            
+            
         
 
     

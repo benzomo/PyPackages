@@ -5,7 +5,7 @@ from IPython import get_ipython
 ipython = get_ipython()
 
 
-ipython.magic("%matplotlib qt")
+ipython.magic("%matplotlib tk")
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt

@@ -6,7 +6,7 @@ Created on Sat Aug 25 15:32:42 2018
 @author: benmo
 """
 import pandas as pd, numpy as np
-from functions import *
+from .functions import *
 
 
 class MLDataFrame(pd.DataFrame):

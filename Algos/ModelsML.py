@@ -6,7 +6,7 @@ Created on Sat Jan 13 22:45:00 2018
 """
 
 import numpy as np, pandas as pd
-from functions import *
+from .functions import *
 
 
 import sklearn

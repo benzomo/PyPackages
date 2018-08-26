@@ -25,7 +25,7 @@ def fourier(df, K, p):
     return df.drop(columns='t')
   
 
-def scale(df, columns=None, how='std'):
+def scale(df, columns=None, how='minmax'):
     if columns == None:
         columns=df.columns
         
