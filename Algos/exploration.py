@@ -94,7 +94,7 @@ class RegressorCollection():
         for key in self.models.keys():
             self.fitted[key] = self.models[key].fit()
             
-    def gen_pc(self, dims=2, topx=20):
+    def gen_pc(self, dims=2, topx=6):
         svd = TruncatedSVD(algorithm='randomized', n_components=2, n_iter=5,
                            random_state=0)
         
