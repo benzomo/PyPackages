@@ -95,7 +95,7 @@ class RegressorCollection():
             self.fitted[key] = self.models[key].fit()
             
     def gen_pc(self, dims=2, topx=20):
-        svd = TruncatedSVD(algorithm='randomized', n_components=2, n_iter=10,
+        svd = TruncatedSVD(algorithm='randomized', n_components=2, n_iter=5,
                            random_state=0)
         
         fi = pd.DataFrame(self.feature_importances_).sort_values(
@@ -107,7 +107,7 @@ class RegressorCollection():
         self.principle_comp = MLDataFrame(
                 pd.DataFrame(rd, columns=['component' + str(i) for i in range(dims)]))
         
-        self.principle_comp.add_scaled()
+        self.principle_comp.add_scaled(self.principle_comp)
             
             
         
