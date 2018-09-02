@@ -23,11 +23,13 @@ from keras.optimizers import Adam
 from keras import backend as K
 
 
+from keras.wrappers.scikit_learn import KerasClassifier, KerasRegressor
+
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import AdaBoostRegressor
 
 
-from functools import reduce
+from functools import reduce, partial
 
 
 def laglead(df,lag, lead):
@@ -172,13 +174,11 @@ class ts_LSTM():
         self.predict = predict        
 
 
-class DecisionTree():
-    
+class DecisionTree():    
     def __init__(self, ttype='aboost',random_state=0,max_depth=4,n_estimators=300): 
         self.max_depth = max_depth
         self.random_state=random_state
         self.n_estimators=n_estimators 
-        self.random_state=random_state
         
         self.__name__ = 'DecisionTree'
         
@@ -202,7 +202,41 @@ class DecisionTree():
         self.predict = predict
         
         
+class NN():    
+    def __init__(self, data, random_state=0, nn_type='regressor'): 
+        self.random_state=random_state
+        self.type = nn_type
+        self.data = data
+        self.ncols = self.data.shape[1]
         
+        self.__name__ = 'NN'
+        
+        
+        if self.type == 'regressor':
+            self.NN_skl = KerasRegressor(build_fn=self.create_model,ncols=self.ncols,hidden_layers=1)
+    
+    def create_model(self, ncols=5,optimizer='adam', act = ['sigmoid'], act_op='sigmoid', 
+                     neurons=None, hidden_layers=1, loss='mean_squared_error', 
+                     metrics=['mae', 'logcosh','mean_absolute_percentage_error']):
+
+        if neurons == None:
+            neurons = [self.ncols]*(hidden_layers + 1)
+        
+        if len(act) == 1:
+            act.extend([act[0]]*hidden_layers)
+        
+        model = Sequential()
+    
+        model.add(Dense(neurons[0], activation=act[0], input_shape=(self.ncols,)))
+    
+        for i in range(hidden_layers):
+            model.add(Dense(neurons[i + 1], activation=act[i]))
+      
+        model.add(Dense(1, activation=act_op))
+      
+        model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
+        
+        return model      
        
     
     

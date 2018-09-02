@@ -10,7 +10,7 @@ from .functions import *
 
 
 class MLDataFrame(pd.DataFrame):
-    _attributes_ = "raw, oh_features , add_oh, add_scaled"
+    _attributes_ = "raw, oh_features, add_oh, add_scaled"
 
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)

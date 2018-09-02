@@ -49,8 +49,6 @@ def scale(df, columns=None, how='minmax'):
         utfm = lambda x: x[columns]*maxmin + mindf           
     
     elif how == 'boxcox':
-       
-
         bxcx_lmd = df.apply(boxcox_normmax)
         mu = df.mean()
         
