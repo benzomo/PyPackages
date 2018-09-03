@@ -16,7 +16,7 @@ from sklearn.model_selection import GridSearchCV
 
 parameters = {'epochs' : [50], 'batch_size' : [50], 'hidden_layers' : [2,3], 
               'neurons' : [[90, 40, 20, 5, 5], [75, 35, 35, 10, 2], [55, 45, 40, 5, 2]], 
-              'act' : [['sigmoid', 'relu', 'relu','sigmoid', 'relu'],], 
+              'act' : [['sigmoid', 'relu', 'relu','sigmoid', 'relu']], 
               'act_op' : ['sigmoid']}
 
 

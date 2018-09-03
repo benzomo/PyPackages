@@ -19,7 +19,7 @@ from keras.layers import Dense, Activation, Dropout, Input
 from keras.layers import LSTM, Reshape, Lambda, RepeatVector
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.utils import to_categorical
-from keras.optimizers import Adam
+from keras.optimizers import Adam, Nadam, Adagrad
 from keras import backend as K
 
 
