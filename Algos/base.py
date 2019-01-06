@@ -9,6 +9,43 @@ import pandas as pd, numpy as np
 from .functions import *
 
 
+def scale(df, columns=None, how='minmax'):
+    if columns == None:
+        columns=df.columns
+        
+    class Transform():
+        def __init__(self, tfm, utfm):
+            self.tfm = tfm
+            self.utfm = utfm
+        
+    if how == 'std':
+        std = df[columns].std(ddof=0)
+        mu = df[columns].mean()
+        tfm = lambda df: pd.DataFrame(StandardScaler().fit_transform(df[columns]),
+                                      index=df.index, columns=columns)
+        utfm = lambda x: x[columns]*std + mu
+    
+    elif how == 'minmax':
+        maxmin = df[columns].max() - df[columns].min() 
+        mindf= df[columns].min()
+        tfm = lambda df: pd.DataFrame(MinMaxScaler().fit_transform(df[columns]),
+                                      index=df.index, columns=columns)
+        utfm = lambda x: x[columns]*maxmin + mindf           
+    
+    elif how == 'boxcox':
+        bxcx_lmd = df.apply(boxcox_normmax)
+        mu = df.mean()
+        
+        tfm = lambda df: boxcox(df[columns], bxcx_lmd[columns]) if isinstance(columns, str) else pd.concat(map(lambda x: boxcox(df[x], bxcx_lmd[x]), 
+                                       df[columns]), axis=1) 
+        utfm = lambda df: boxcox(df[columns], bxcx_lmd[columns]) if isinstance(columns, str) else pd.concat(map(lambda x: inv_boxcox(df[x], bxcx_lmd[x]), 
+                                       df[columns]), axis=1) 
+            
+    scaler = Transform(tfm,utfm)
+    
+    return scaler
+
+
 class MLDataFrame(pd.DataFrame):
     _attributes_ = "raw, oh_features, add_oh, add_scaled"
 

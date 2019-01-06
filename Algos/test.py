@@ -9,7 +9,7 @@ X_raw.drop(columns='SalePrice',inplace=True)
 X_raw = X_raw.fillna(X_raw.mean())
 
 
-rc = RegressorCollection(X_raw, y_raw)
+#rc = RegressorCollection(X_raw, y_raw)
 
 from sklearn.model_selection import GridSearchCV
 
@@ -20,7 +20,7 @@ parameters = {'epochs' : [50], 'batch_size' : [50], 'hidden_layers' : [2,3],
               'act_op' : ['sigmoid']}
 
 
-nn1 = NN(rc.X.scaled)
+nn1 = NN(X_raw)
 
 clf = GridSearchCV(nn1.NN_skl, parameters)
-fitted = clf.fit(rc.X.scaled, rc.y.scaled.iloc(axis=1)[0])
+fitted = clf.fit(X_raw, X_raw.iloc(axis=1)[0])

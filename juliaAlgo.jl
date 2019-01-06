@@ -20,6 +20,7 @@ include("./tradingFuncs.jl")
 models_loc = "/home/benmo/Data/Databases/Models/LSTM/"
 
 
+
 function save_model(mdl, dir)
     pd.Series(stocksⱼ)[:to_csv](dir*"stocksj.csv")
     mdl[:save_weights](dir*"model.h5")
